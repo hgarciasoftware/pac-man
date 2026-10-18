@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>PAC-MAN | GROUP 2 | CISC 3140 - FALL 2026</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./index.css">
+  </head>
+  <body>
+    <main id="game-container">
+      <canvas id="game" width="570" height="690"></canvas>
+    </div>
+    <script src="maze_demo.js"></script>
+    <script type="module">
+      import { GameState, setState } from './state.js';
+      import { initMenu } from './menu.js';
+
+      const container = document.querySelector('#game-container');
+      const onPlay = () => {
+        setState(GameState.PLAYING);
+      };
+
+      initMenu({container, onPlay});
+      setState(GameState.MENU);
+    </script>
+  </body>
+</html>
