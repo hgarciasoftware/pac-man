@@ -36,10 +36,11 @@ const TILE_SIZE = 30;
 function draw(maze) {
     for (let i = 0; i < maze.length; i++) {
         for (let j = 0; j < maze[i].length; j++) {
-            ctx.fillStyle = maze[i][j] == 0 ? 'black' : 'blue';
+            ctx.fillStyle = maze[i][j] == 0 ? '#1c1c1c' : '#2f2bff';
             ctx.fillRect(j * TILE_SIZE, i * TILE_SIZE, TILE_SIZE, TILE_SIZE);
         }
     }
+    ctx.fillStyle = '#fcba03';
+    ctx.fillRect(player.x * TILE_SIZE, player.y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
 }
-
 draw(maze_v1);

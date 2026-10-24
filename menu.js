@@ -87,7 +87,7 @@ let actions = {};       // what each button does
 export function initMenu({ container, onPlay }) {
     actions = {
         play: onPlay,
-        settings: () => setState(GameState.SETTINGS),      // screen comes in Stage 2
+        settings: () => setState(GameState.SETTINGS),      // screen in settingsMenu.js
         highscores: () => setState(GameState.HIGH_SCORES), // screen comes in Stage 3
     };
 
@@ -144,22 +144,26 @@ function handleKeyDown(event) {
 
     switch (event.key) {
         case 'ArrowUp':
-            event.preventDefault(); // stop the page from scrolling
             // Going up from the first item wraps to the last one
             select((selectedIndex - 1 + menuItems.length) % menuItems.length);
             break;
         case 'ArrowDown':
-            event.preventDefault();
             // Going down from the last item wraps to the first one
             select((selectedIndex + 1) % menuItems.length);
             break;
         case 'Enter':
-            // Without this, a button focused by a mouse click would also
-            // fire its own click, running the action twice
-            event.preventDefault();
             activate(menuItems[selectedIndex]);
             break;
+        default:
+            return; // not our key, let other code handle it
     }
+
+    // The menu used the key:
+    // - preventDefault stops page scrolling and a focused button firing its own click
+    // - stopImmediatePropagation stops other key handlers reacting to the same press
+    //   (e.g. the Enter on SETTINGS also changing a setting on the settings screen)
+    event.preventDefault();
+    event.stopImmediatePropagation();
 }
 
 // Moves the highlight to the button at the given index.
