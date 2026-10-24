@@ -15,7 +15,7 @@ npx http-server (More info: https://github.com/http-party/http-server#running-on
 
 ## Credits
 
-`maze_demo.js` and `player_movement.js`  - Elian Urena
-`menu.js`, `settings.js`, `settingsMenu.js`, and `state.js` - Danylo Dudchenko
+* `maze_demo.js` and `player_movement.js`  - Elian Urena
+* `menu.js`, `settings.js`, `settingsMenu.js`, and `state.js` - Danylo Dudchenko
 
 *More to come*
