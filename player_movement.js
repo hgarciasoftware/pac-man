@@ -1,6 +1,9 @@
+import { GameState, getState } from './state.js';
+import { draw, maze_v1 } from './maze_demo.js';
+
 console.log("player_movement.js loaded");
 
-let player = {
+export let player = {
     x: 9,
     y: 9
 };
@@ -23,6 +26,8 @@ function logMovement(player) {
 };
 
 document.addEventListener('keydown', (event) => {
+    if (getState() !== GameState.PLAYING) return;
+
     console.log(`Key pressed: ${event.key}`);
     const direction = movements[event.key];
 

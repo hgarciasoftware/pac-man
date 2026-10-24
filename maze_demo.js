@@ -1,8 +1,10 @@
+import { player } from "./player_movement.js";
+
 const canvas = document.getElementById('game');
 const ctx = canvas.getContext('2d');
 
 // 19*23 maze
-const maze_v1 = [
+export const maze_v1 = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1],
@@ -33,7 +35,7 @@ const maze_v1 = [
 
 const TILE_SIZE = 30;
 
-function draw(maze) {
+export function draw(maze) {
     for (let i = 0; i < maze.length; i++) {
         for (let j = 0; j < maze[i].length; j++) {
             ctx.fillStyle = maze[i][j] == 0 ? '#1c1c1c' : '#2f2bff';

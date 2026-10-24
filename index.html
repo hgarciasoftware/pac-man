@@ -13,14 +13,11 @@
         <div id="coordinates"></div>
       </div>
     </div>
-    <!-- player_movement.js must be loaded first -->
-    <!-- player_movement.js currently defines the player -->
-    <script src="player_movement.js"></script>
-    <!-- maze_demo.js depends on the player already being defined -->
-    <script src="maze_demo.js"></script>
     <script type="module">
       import { GameState, setState } from './state.js';
       import { initMenu } from './menu.js';
+      import { initSettingsMenu } from './settingsMenu.js';
+      import './maze_demo.js';
 
       const container = document.querySelector('#game-container');
       const onPlay = () => {
@@ -28,6 +25,7 @@
       };
 
       initMenu({container, onPlay});
+      initSettingsMenu({container});
       setState(GameState.MENU);
     </script>
   </body>
