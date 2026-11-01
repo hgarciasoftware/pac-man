@@ -11,7 +11,7 @@ We students divided the work among 4 groups of 4+ students. These groups are:
 
 ## How do I run this code locally?
 
-npx http-server (More info: https://github.com/http-party/http-server#running-on-demand)
+`npx http-server` (More info: https://github.com/http-party/http-server#running-on-demand)
 
 ## Credits
 
