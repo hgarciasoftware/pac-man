@@ -34,6 +34,9 @@ export const maze_v1 = [
 // 0 = empty
 
 const TILE_SIZE = 30;
+const PACMAN_IMAGE = new Image();
+
+PACMAN_IMAGE.src = './pacman.png';
 
 export function draw(maze) {
     for (let i = 0; i < maze.length; i++) {
@@ -42,7 +45,11 @@ export function draw(maze) {
             ctx.fillRect(j * TILE_SIZE, i * TILE_SIZE, TILE_SIZE, TILE_SIZE);
         }
     }
-    ctx.fillStyle = '#fcba03';
-    ctx.fillRect(player.x * TILE_SIZE, player.y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+
+    // if the browser has finished loading pacman.png AND if pacman.png has loaded successfully
+    if (PACMAN_IMAGE.complete && PACMAN_IMAGE.naturalWidth > 0) {
+        ctx.drawImage(PACMAN_IMAGE, player.x * TILE_SIZE, player.y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+    }
 }
-draw(maze_v1);
+
+PACMAN_IMAGE.onload = () => draw(maze_v1);
