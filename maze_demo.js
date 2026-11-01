@@ -38,7 +38,25 @@ const PACMAN_IMAGE = new Image();
 
 PACMAN_IMAGE.src = './pacman.png';
 
-export function draw(maze) {
+const angles = {
+    up: 0,
+    right: Math.PI / 2,
+    down: Math.PI,
+    left: -Math.PI / 2
+};
+
+function drawPacMan(facing) {
+    const centerX = (player.x + 0.5) * TILE_SIZE;
+    const centerY = (player.y + 0.5) * TILE_SIZE;
+
+    ctx.save();
+    ctx.translate(centerX, centerY);
+    ctx.rotate(angles[facing]);
+    ctx.drawImage(PACMAN_IMAGE, -TILE_SIZE / 2, -TILE_SIZE / 2, TILE_SIZE, TILE_SIZE);
+    ctx.restore();
+}
+
+export function draw(maze, facing = 'up') {
     for (let i = 0; i < maze.length; i++) {
         for (let j = 0; j < maze[i].length; j++) {
             ctx.fillStyle = maze[i][j] == 0 ? '#1c1c1c' : '#2f2bff';
@@ -48,8 +66,9 @@ export function draw(maze) {
 
     // if the browser has finished loading pacman.png AND if pacman.png has loaded successfully
     if (PACMAN_IMAGE.complete && PACMAN_IMAGE.naturalWidth > 0) {
-        ctx.drawImage(PACMAN_IMAGE, player.x * TILE_SIZE, player.y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+        drawPacMan(facing);
     }
 }
+draw(maze_v1);
 
 PACMAN_IMAGE.onload = () => draw(maze_v1);

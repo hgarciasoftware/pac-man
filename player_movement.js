@@ -16,6 +16,13 @@ const movements = {
     ArrowRight: {dy: 0, dx: 1}
 };
 
+const facing = {
+    ArrowUp: 'up',
+    ArrowDown: 'down',
+    ArrowLeft: 'left',
+    ArrowRight: 'right',
+};
+
 /* Sends move log to the console, as well as updates a coordinate
     text below the maze, I don't know if this is temporary or a feature,
     or something that can be toggled in settings, up to Specs.
@@ -43,7 +50,7 @@ document.addEventListener('keydown', (event) => {
         player.x += direction.dx;
         player.y += direction.dy;
         logMovement(player);
-        draw(maze_v1)
+        draw(maze_v1, facing[event.key]);
     };
 });
 
