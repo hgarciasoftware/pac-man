@@ -14,12 +14,14 @@
 // so a typo shows up as an error instead of a silent bug.
 // Object.freeze stops anyone from changing the list by accident.
 export const GameState = Object.freeze({
-    MENU: 'menu',
+    MENU: 'menu',                         // title screen
+    CHARACTER_SELECT: 'characterSelect',  // Mr. or Mrs. Pac-Man, before the maze
     PLAYING: 'playing',
-    PAUSED: 'paused',
-    SETTINGS: 'settings',
+    PAUSED: 'paused',                     // P / Space: game frozen, no menu
+    LEVEL_COMPLETE: 'levelComplete',      // after level 1 or 2
+    WIN: 'win',                           // after level 3
+    GAME_OVER: 'gameOver',                // 0 lives left
     HIGH_SCORES: 'highScores',
-    GAME_OVER: 'gameOver',
 });
 
 const validStates = new Set(Object.values(GameState));

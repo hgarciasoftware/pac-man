@@ -1,11 +1,18 @@
 // ============================================================
-// menu.js - Main menu
+// menu.js - Main menu (title screen)
 //
-// Creates the main menu (title + PLAY / SETTINGS / HIGH SCORES),
+// Creates the main menu (title + START GAME / THEME / HIGH SCORES),
 // shows it only in the MENU state, and handles navigation:
-//   - Arrow Up / Down : move the selection
-//   - Enter           : choose the selected item
-//   - Mouse           : hover to select, click to choose
+//   - Arrow Up / Down    : move the selection
+//   - Enter              : choose the selected item
+//   - Arrow Left / Right : change the theme (when THEME is selected)
+//   - T                  : change the theme (any time on this screen)
+//   - Mouse              : hover to select, click to choose
+//
+// It also applies the current theme's colours to the page as CSS
+// variables, so other screens can use them too:
+//   var(--theme-background), var(--theme-text),
+//   var(--theme-highlight), var(--theme-accent)
 //
 // Usage (in the team's main file):
 //   initMenu({ container: gameContainerElement, onPlay: startGame });
@@ -13,66 +20,72 @@
 // ============================================================
 
 import { GameState, getState, setState, onStateChange } from './state.js';
+import { nextTheme, getThemeColors, onSettingChange } from './settings.js';
 
 // Menu styles live here so the menu works without a separate CSS file.
+// Colours come from the theme variables, so they change with the theme.
 const MENU_STYLES = `
     @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
-    /* Covers the whole game area, content centred */
+    /* Covers the whole game area */
     #main-menu {
         position: absolute;
         inset: 0;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 40px;
-        background: rgba(0, 0, 0, 0.92);
+        background: var(--theme-background);
+        color: var(--theme-text);
         font-family: 'Press Start 2P', monospace;
     }
     #main-menu.hidden { display: none; }
 
+    /* Title near the top, like the 1980 arcade title screen */
     #main-menu .title {
+        position: absolute;
+        top: 12%;
+        left: 0;
+        right: 0;
         margin: 0;
+        text-align: center;
         font-size: 40px;
-        color: #ffff00;
-        text-shadow: 4px 4px 0 #2121de;
+        color: var(--theme-highlight);
+        text-shadow: 4px 4px 0 var(--theme-accent);
     }
 
+    /* Options start halfway down the screen, evenly spaced */
     #main-menu .menu-list {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 320px;
         display: flex;
         flex-direction: column;
-        gap: 20px;
+        gap: 24px;
     }
 
+    /* Blocky retro buttons: square border in the theme's accent colour */
     #main-menu .menu-item {
-        position: relative;
         background: none;
-        border: none;
-        color: #fff;
+        border: 3px solid var(--theme-accent);
+        color: var(--theme-text);
         font-family: inherit;
-        font-size: 16px;
-        padding: 4px 0 4px 32px; /* space on the left for the arrow */
-        text-align: left;
+        font-size: 14px;
+        padding: 12px;
         cursor: pointer;
     }
     #main-menu .menu-item:focus { outline: none; }
 
-    /* Selected item: yellow with a blinking arrow in front */
-    #main-menu .menu-item.selected { color: #ffff00; }
-    #main-menu .menu-item.selected::before {
-        content: '▶';
-        position: absolute;
-        left: 0;
-        animation: menu-blink 0.8s steps(1) infinite;
+    /* Selected item: filled block in the highlight colour */
+    #main-menu .menu-item.selected {
+        background: var(--theme-highlight);
+        border-color: var(--theme-highlight);
+        color: var(--theme-background);
     }
-    @keyframes menu-blink { 50% { opacity: 0; } }
 `;
 
 // Menu buttons, top to bottom. "action" is the key in the actions object below.
 const MENU_ITEMS = [
-    { label: 'PLAY', action: 'play' },
-    { label: 'SETTINGS', action: 'settings' },
+    { label: 'START GAME', action: 'play' },
+    { label: 'THEME', action: 'theme' },
     { label: 'HIGH SCORES', action: 'highscores' },
 ];
 
@@ -83,11 +96,12 @@ let actions = {};       // what each button does
 
 // Sets up the menu. Call once when the game loads.
 //   container - element the menu goes into (needs position: relative so the menu covers it)
-//   onPlay    - function that starts the game (from the game-logic team)
+//   onPlay    - function that starts the game (from the game-logic team);
+//               later this will open the character select screen first
 export function initMenu({ container, onPlay }) {
     actions = {
         play: onPlay,
-        settings: () => setState(GameState.SETTINGS),      // screen in settingsMenu.js
+        theme: () => nextTheme(),
         highscores: () => setState(GameState.HIGH_SCORES), // screen comes in Stage 3
     };
 
@@ -100,6 +114,12 @@ export function initMenu({ container, onPlay }) {
         menuElement.classList.toggle('hidden', newState !== GameState.MENU);
     });
     menuElement.classList.toggle('hidden', getState() !== GameState.MENU);
+
+    // Recolour everything when the theme changes (from this menu or the T key in game)
+    onSettingChange((name) => {
+        if (name === 'theme') applyTheme();
+    });
+    applyTheme();
 
     document.addEventListener('keydown', handleKeyDown);
     select(0);
@@ -138,9 +158,25 @@ function createMenuElement() {
     return menu;
 }
 
+// Puts the current theme's colours into CSS variables on the page,
+// and shows the theme name on the THEME button, e.g. "THEME: CLASSIC".
+function applyTheme() {
+    const colors = getThemeColors();
+    const root = document.documentElement.style;
+    root.setProperty('--theme-background', colors.background);
+    root.setProperty('--theme-text', colors.text);
+    root.setProperty('--theme-highlight', colors.highlight);
+    root.setProperty('--theme-accent', colors.accent);
+
+    const themeButton = menuItems.find((item) => item.dataset.action === 'theme');
+    themeButton.textContent = `THEME: ${colors.label}`;
+}
+
 function handleKeyDown(event) {
     // Ignore keys when the menu isn't on screen (e.g. arrows during the game)
     if (getState() !== GameState.MENU) return;
+
+    const isThemeSelected = menuItems[selectedIndex].dataset.action === 'theme';
 
     switch (event.key) {
         case 'ArrowUp':
@@ -150,6 +186,18 @@ function handleKeyDown(event) {
         case 'ArrowDown':
             // Going down from the last item wraps to the first one
             select((selectedIndex + 1) % menuItems.length);
+            break;
+        case 'ArrowLeft':
+            if (!isThemeSelected) return; // only used on the THEME button
+            nextTheme(-1);
+            break;
+        case 'ArrowRight':
+            if (!isThemeSelected) return;
+            nextTheme(+1);
+            break;
+        case 't':
+        case 'T':
+            nextTheme();
             break;
         case 'Enter':
             activate(menuItems[selectedIndex]);
@@ -161,7 +209,7 @@ function handleKeyDown(event) {
     // The menu used the key:
     // - preventDefault stops page scrolling and a focused button firing its own click
     // - stopImmediatePropagation stops other key handlers reacting to the same press
-    //   (e.g. the Enter on SETTINGS also changing a setting on the settings screen)
+    //   (e.g. the Enter on START GAME also being read by the next screen)
     event.preventDefault();
     event.stopImmediatePropagation();
 }

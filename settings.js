@@ -5,36 +5,65 @@
 // (localStorage), so they are still there after a page reload.
 //
 // How other files use it:
-//   getSetting('difficulty')   -> read one setting
-//   setSetting('volume', 50)   -> change a setting (saved automatically)
+//   getSetting('muted')        -> read one setting
+//   setSetting('muted', true)  -> change a setting (saved automatically)
+//   nextTheme()                -> switch to the next colour theme (T key)
+//   getThemeColors()           -> colours of the current theme
 //   resetSettings()            -> go back to the default values
 //   onSettingChange(fn)        -> run fn every time a setting changes
 //
 // Settings and their values:
-//   volume     : whole number 0-100 (percent)
-//   music      : true / false
-//   sfx        : true / false (sound effects)
-//   difficulty : 'easy' / 'normal' / 'hard'
-//   controls   : 'arrows' / 'wasd'
+//   muted : true / false (M key toggles it)
+//   theme : one of the names in THEMES below
 // ============================================================
+
+// Colour themes, in the order the T key cycles through them.
+// PLACEHOLDER colours: replace them with the ones the team agrees on.
+//   background - screen background
+//   text       - normal text
+//   highlight  - selected item, titles
+//   accent     - borders, shadows
+export const THEMES = Object.freeze({
+    classic: {
+        label: 'CLASSIC',
+        background: '#000000',
+        text: '#ffffff',
+        highlight: '#ffff00',
+        accent: '#2121de',
+    },
+    midnight: {
+        label: 'MIDNIGHT',
+        background: '#0b0b3b',
+        text: '#ffffff',
+        highlight: '#ffb8ff',
+        accent: '#00ffff',
+    },
+    retro: {
+        label: 'RETRO',
+        background: '#001a00',
+        text: '#ccffcc',
+        highlight: '#33ff33',
+        accent: '#008800',
+    },
+    // Colourblind-friendly: avoids red/green, uses orange and blue
+    colorblind: {
+        label: 'COLORBLIND',
+        background: '#000000',
+        text: '#ffffff',
+        highlight: '#ffb000',
+        accent: '#0072b2',
+    },
+});
+
+const THEME_NAMES = Object.keys(THEMES);
 
 // Name of the saved data in the browser's localStorage
 const STORAGE_KEY = 'pacman-settings';
 
 // Values used the first time, or when saved data is missing/broken
 const DEFAULT_SETTINGS = Object.freeze({
-    volume: 70,
-    music: true,
-    sfx: true,
-    difficulty: 'normal',
-    controls: 'arrows',
-});
-
-// Allowed choices for settings that are a list of options.
-// Exported so the settings screen can show them in this order.
-export const SETTING_OPTIONS = Object.freeze({
-    difficulty: ['easy', 'normal', 'hard'],
-    controls: ['arrows', 'wasd'],
+    muted: false,
+    theme: 'classic',
 });
 
 let settings = loadSettings(); // the current values
@@ -48,7 +77,7 @@ export function getSetting(name) {
     return settings[name];
 }
 
-// Returns a copy of all settings, e.g. { volume: 70, music: true, ... }
+// Returns a copy of all settings, e.g. { muted: false, theme: 'classic' }
 export function getAllSettings() {
     return { ...settings };
 }
@@ -64,10 +93,23 @@ export function setSetting(name, value) {
     settings[name] = value;
     saveSettings();
 
-    // Tell everyone who is listening, e.g. the sound code updates the volume
+    // Tell everyone who is listening, e.g. the menu recolours itself
     for (const listener of listeners) {
         listener(name, value);
     }
+}
+
+// Switches to the next theme, wrapping from the last back to the first.
+// direction: +1 = next (default), -1 = previous.
+export function nextTheme(direction = 1) {
+    const index = THEME_NAMES.indexOf(settings.theme);
+    const newIndex = (index + direction + THEME_NAMES.length) % THEME_NAMES.length;
+    setSetting('theme', THEME_NAMES[newIndex]);
+}
+
+// Colours of the current theme, e.g. { label: 'CLASSIC', background: '#000000', ... }
+export function getThemeColors() {
+    return THEMES[settings.theme];
 }
 
 export function resetSettings() {
@@ -86,21 +128,17 @@ export function onSettingChange(listener) {
 // Checks that a value is allowed for the given setting.
 function isValidValue(name, value) {
     switch (name) {
-        case 'volume':
-            return Number.isInteger(value) && value >= 0 && value <= 100;
-        case 'music':
-        case 'sfx':
+        case 'muted':
             return typeof value === 'boolean';
-        case 'difficulty':
-        case 'controls':
-            return SETTING_OPTIONS[name].includes(value);
+        case 'theme':
+            return THEME_NAMES.includes(value);
         default:
             return false; // unknown setting name
     }
 }
 
 // Reads saved settings. Any value that is missing or invalid
-// (e.g. someone edited the saved data by hand) uses its default instead.
+// (e.g. old saved data from an earlier version) uses its default instead.
 function loadSettings() {
     const loaded = { ...DEFAULT_SETTINGS };
     try {
