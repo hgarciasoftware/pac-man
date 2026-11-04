@@ -42,6 +42,8 @@ function logFPS(fps) {
 }
 
 document.addEventListener('keydown', (event) => {
+    if (getState() !== GameState.PLAYING) return;
+
     const direction = movements[event.key];
 
     //this is so it ignores all keys that arent the arrow keys
@@ -114,4 +116,7 @@ function loop(now) {
     requestAnimationFrame(loop);
 }
 
-requestAnimationFrame(loop);
+export function startGameLoop() {
+    last = performance.now();
+    requestAnimationFrame(loop);
+}
