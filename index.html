@@ -10,18 +10,21 @@
       <canvas id="game" width="570" height="690"></canvas>
       <div class="debug">
         <div>Coordinates:</div>
-        <div id="coordinates"></div>
+        <div id="coordinates">waiting for input&hellip;</div>
+        <div>FPS:</div>
+        <div id="fps">waiting&hellip;</div>
       </div>
     </div>
     <script type="module">
       import { GameState, setState } from './state.js';
       import { initMenu } from './menu.js';
       // import { initSettingsMenu } from './settingsMenu.js';
-      import './maze_demo.js';
+      import { startGameLoop } from './player_movement.js';
 
       const container = document.querySelector('#game-container');
       const onPlay = () => {
         setState(GameState.PLAYING);
+        startGameLoop();
       };
 
       initMenu({container, onPlay});

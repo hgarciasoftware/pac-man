@@ -1,5 +1,7 @@
 import { player } from "./player_movement.js";
 
+console.log("maze_demo.js loaded");
+
 const canvas = document.getElementById('game');
 const ctx = canvas.getContext('2d');
 
@@ -46,8 +48,8 @@ const angles = {
 };
 
 function drawPacMan(facing) {
-    const centerX = (player.x + 0.5) * TILE_SIZE;
-    const centerY = (player.y + 0.5) * TILE_SIZE;
+    const centerX = (player.renderX + 0.5) * TILE_SIZE;
+    const centerY = (player.renderY + 0.5) * TILE_SIZE;
 
     ctx.save();
     ctx.translate(centerX, centerY);
@@ -56,7 +58,7 @@ function drawPacMan(facing) {
     ctx.restore();
 }
 
-export function draw(maze, facing = 'up') {
+export function draw(maze, facing) {
     for (let i = 0; i < maze.length; i++) {
         for (let j = 0; j < maze[i].length; j++) {
             ctx.fillStyle = maze[i][j] == 0 ? '#1c1c1c' : '#2f2bff';
@@ -69,6 +71,3 @@ export function draw(maze, facing = 'up') {
         drawPacMan(facing);
     }
 }
-draw(maze_v1);
-
-PACMAN_IMAGE.onload = () => draw(maze_v1);
