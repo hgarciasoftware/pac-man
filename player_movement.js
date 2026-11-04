@@ -3,9 +3,20 @@ import { draw, maze_v1 } from './maze_demo.js';
 
 console.log("player_movement.js loaded");
 
+const SPEED = 6; // tiles per second, can increase for difficulty?
+
+// variables for frame counting
+let frameCount = 0;
+let fpsTimer = 0;
+let last = performance.now();
+
 export let player = {
-    x: 9,
-    y: 9
+    x: 9,            // logical tile (used for collision)
+    y: 9,
+    renderX: 9,      // smoothed position (used for drawing), in tile units
+    renderY: 9,
+    moving: false,
+    nextDir: null    // buffered direction
 };
 
 //a change in x or y based on the key input
@@ -22,40 +33,85 @@ const movements = {
 */
 function logMovement(player) {
     console.log(`You have moved to (${player.x}, ${player.y})`);
-    document.getElementById('coordinates').textContent = `[${player.x}, ${player.y}]`; //this could be removed as it is just to display coordinates on a temp webpage I was working on, We can keep if we plan to display coords.
-};
+    document.getElementById('coordinates').textContent = `[${player.x}, ${player.y}]`;
+}
+
+function logFPS(fps) {
+    console.log(`FPS: ${fps}`);
+    document.getElementById('fps').textContent = `${fps}`;
+}
 
 document.addEventListener('keydown', (event) => {
-    if (getState() !== GameState.PLAYING) return;
-
-    console.log(`Key pressed: ${event.key}`);
     const direction = movements[event.key];
 
     //this is so it ignores all keys that arent the arrow keys
     if (!direction) {
         return;
-    };
+    }
     event.preventDefault();
-    /*
-    if checkCollision returns false, this moves the player's x and y.
-    */
-    if (!checkCollision(player, direction , maze_v1)) {
-        player.x += direction.dx;
-        player.y += direction.dy;
-        logMovement(player);
-        draw(maze_v1)
-    };
+    player.nextDir = direction;
 });
-
 
 function checkCollision(player, direction, maze) {
     const newX = player.x + direction.dx;
     const newY = player.y + direction.dy;
 
+    // out of bounds counts as a wall
+    if (maze[newY] === undefined || maze[newY][newX] === undefined) {
+        return true;
+    }
 
     if (maze[newY][newX] == 1) { // Wall!!
-        console.log(`Wall at (${newX}, ${newY})`);
         return true;
     }
     return false;
 }
+
+function update(dt) {
+    // the position the player is drawn at slides toward the logical tile
+    if (player.moving) {
+        const dx = player.x - player.renderX;
+        const dy = player.y - player.renderY;
+        const distance = Math.hypot(dx, dy);
+        const step = SPEED * dt;
+
+        if (distance <= step) {
+            player.renderX = player.x;
+            player.renderY = player.y;
+            player.moving = false;
+        } else {
+            player.renderX += (dx / distance) * step;
+            player.renderY += (dy / distance) * step;
+        }
+    }
+
+    // collision detection for walls, then start the next move
+    if (!player.moving && player.nextDir) {
+        if (!checkCollision(player, player.nextDir, maze_v1)) {
+            player.x += player.nextDir.dx;
+            player.y += player.nextDir.dy;
+            player.moving = true;
+            logMovement(player);
+        }
+    }
+}
+
+function loop(now) {
+    const rawDt = (now - last) / 1000;
+    last = now;
+    const dt = Math.min(rawDt, 1 / 30);
+
+    frameCount++;
+    fpsTimer += rawDt;
+    if (fpsTimer >= 1) {
+        logFPS(Math.round(frameCount / fpsTimer));
+        frameCount = 0;
+        fpsTimer = 0;
+    }
+
+    update(dt);
+    draw(maze_v1);
+    requestAnimationFrame(loop);
+}
+
+requestAnimationFrame(loop);

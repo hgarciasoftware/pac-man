@@ -1,5 +1,7 @@
 import { player } from "./player_movement.js";
 
+console.log("maze_demo.js loaded");
+
 const canvas = document.getElementById('game');
 const ctx = canvas.getContext('2d');
 
@@ -43,6 +45,5 @@ export function draw(maze) {
         }
     }
     ctx.fillStyle = '#fcba03';
-    ctx.fillRect(player.x * TILE_SIZE, player.y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+    ctx.fillRect(player.renderX * TILE_SIZE, player.renderY * TILE_SIZE, TILE_SIZE, TILE_SIZE);
 }
-draw(maze_v1);
