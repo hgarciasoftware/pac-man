@@ -1,5 +1,6 @@
 import { GameState, getState } from './state.js';
 import { draw, maze_v1 } from './maze_demo.js';
+import { collectPellet } from './pellet_collection.js';
 
 console.log("player_movement.js loaded");
 
@@ -16,7 +17,8 @@ export let player = {
     renderX: 9,      // smoothed position (used for drawing), in tile units
     renderY: 9,
     moving: false,
-    nextDir: null    // buffered direction
+    nextDir: null,    // buffered direction
+    pellets: 0
 };
 
 //a change in x or y based on the key input
@@ -81,6 +83,7 @@ function update(dt) {
             player.renderX = player.x;
             player.renderY = player.y;
             player.moving = false;
+            collectPellet(player);
         } else {
             player.renderX += (dx / distance) * step;
             player.renderY += (dy / distance) * step;

@@ -1,9 +1,10 @@
 import { player } from "./player_movement.js";
+import { drawPellets } from "./pellet_collection.js";
 
 console.log("maze_demo.js loaded");
 
 const canvas = document.getElementById('game');
-const ctx = canvas.getContext('2d');
+export const ctx = canvas.getContext('2d');
 
 // 19*23 maze
 export const maze_v1 = [
@@ -35,7 +36,7 @@ export const maze_v1 = [
 // 1 = wall
 // 0 = empty
 
-const TILE_SIZE = 30;
+export const TILE_SIZE = 30;
 
 export function draw(maze) {
     for (let i = 0; i < maze.length; i++) {
@@ -44,6 +45,7 @@ export function draw(maze) {
             ctx.fillRect(j * TILE_SIZE, i * TILE_SIZE, TILE_SIZE, TILE_SIZE);
         }
     }
+    drawPellets();
     ctx.fillStyle = '#fcba03';
     ctx.fillRect(player.renderX * TILE_SIZE, player.renderY * TILE_SIZE, TILE_SIZE, TILE_SIZE);
 }
