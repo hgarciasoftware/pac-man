@@ -46,6 +46,9 @@ export function draw(maze) {
         }
     }
     drawPellets();
-    ctx.fillStyle = '#fcba03';
-    ctx.fillRect(player.renderX * TILE_SIZE, player.renderY * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+    drawRedGhost();
+    if (!gameOver) {
+      ctx.fillStyle = '#fcba03';
+      ctx.fillRect(player.renderX * TILE_SIZE, player.renderY * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+    }
 }

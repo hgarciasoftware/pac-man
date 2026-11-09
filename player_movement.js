@@ -4,7 +4,9 @@ import { collectPellet } from './pellet_collection.js';
 
 console.log("player_movement.js loaded");
 
-const SPEED = 6; // tiles per second, can increase for difficulty?
+const SPEED = 5; // tiles per second, can increase for difficulty?
+
+let gameOver = false;
 
 // variables for frame counting
 let frameCount = 0;
@@ -17,7 +19,7 @@ export let player = {
     renderX: 9,      // smoothed position (used for drawing), in tile units
     renderY: 9,
     moving: false,
-    nextDir: null,    // buffered direction
+    nextDir: null, // buffered direction
     pellets: 0
 };
 
@@ -114,7 +116,13 @@ function loop(now) {
         fpsTimer = 0;
     }
 
-    update(dt);
+    if (!gameOver) {
+        update(dt);
+        updateRedGhost(dt);
+        if (redGhostCaughtPlayer()) {
+            gameOver = true;
+        }
+    }
     draw(maze_v1);
     requestAnimationFrame(loop);
 }
