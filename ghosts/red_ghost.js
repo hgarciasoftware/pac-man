@@ -1,3 +1,6 @@
+import { ctx, maze_v1, TILE_SIZE } from "../maze_demo.js";
+import { player } from "../player_movement.js";
+
 console.log("red_ghost.js loaded");
 
 const RED_GHOST_SPEED = 4;
@@ -56,7 +59,7 @@ function redNextStep(fromX, fromY, toX, toY, maze) {
   return null;
 }
 
-function updateRedGhost(dt) {
+export function updateRedGhost(dt) {
   //slide the drawn position toward the actual tile
   if (redGhost.moving) {
     const dx = redGhost.x - redGhost.renderX;
@@ -87,7 +90,7 @@ function updateRedGhost(dt) {
 }
 
 //true when the ghost and pacman share the same position, (pacman dies)
-function redGhostCaughtPlayer() {
+export function redGhostCaughtPlayer() {
   const dx = redGhost.renderX - player.renderX;
   const dy = redGhost.renderY - player.renderY;
   return Math.hypot(dx, dy) < 0.6;
@@ -99,7 +102,7 @@ function redGhostCaughtPlayer() {
 
 //this is just temporary for testing purposes, can be replaced with 
 //code that provides that actual images for the red ghost
-function drawRedGhost() {
+export function drawRedGhost() {
   ctx.fillStyle = '#ff0000';
   ctx.fillRect(redGhost.renderX * TILE_SIZE, redGhost.renderY * TILE_SIZE, TILE_SIZE, TILE_SIZE);
 }

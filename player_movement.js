@@ -1,12 +1,13 @@
 import { GameState, getState } from './state.js';
 import { draw, maze_v1 } from './maze_demo.js';
 import { collectPellet } from './pellet_collection.js';
+import { redGhostCaughtPlayer, updateRedGhost } from "./ghosts/red_ghost.js";
 
 console.log("player_movement.js loaded");
 
 const SPEED = 5; // tiles per second, can increase for difficulty?
 
-let gameOver = false;
+export let gameOver = false;
 
 // variables for frame counting
 let frameCount = 0;

@@ -1,5 +1,6 @@
-import { player } from "./player_movement.js";
+import { gameOver, player } from "./player_movement.js";
 import { drawPellets } from "./pellet_collection.js";
+import { drawRedGhost } from "./ghosts/red_ghost.js";
 
 console.log("maze_demo.js loaded");
 
