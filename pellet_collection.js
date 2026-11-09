@@ -22,6 +22,7 @@ export function drawPellets() {
   for (let i = 0; i < pellets.length; i++) {
     for (let j = 0; j < pellets[i].length; j++) {
       if (pellets[i][j]) {
+	// following lines to be replaced with the actual image of the pellet, this is just temporary for testing purposes.
         ctx.beginPath();
         ctx.arc(
           j * TILE_SIZE + TILE_SIZE / 2,
