@@ -1,9 +1,11 @@
-import { player } from "./player_movement.js";
+import { gameOver, player } from "./player_movement.js";
+import { drawPellets } from "./pellet_collection.js";
+import { drawRedGhost } from "./ghosts/red_ghost.js";
 
 console.log("maze_demo.js loaded");
 
 const canvas = document.getElementById('game');
-const ctx = canvas.getContext('2d');
+export const ctx = canvas.getContext('2d');
 
 // 19*23 maze
 export const maze_v1 = [
@@ -35,7 +37,7 @@ export const maze_v1 = [
 // 1 = wall
 // 0 = empty
 
-const TILE_SIZE = 30;
+export const TILE_SIZE = 30;
 const PACMAN_IMAGE = new Image();
 
 PACMAN_IMAGE.src = './pacman.png';
@@ -66,8 +68,12 @@ export function draw(maze, facing) {
         }
     }
 
-    // if the browser has finished loading pacman.png AND if pacman.png has loaded successfully
-    if (PACMAN_IMAGE.complete && PACMAN_IMAGE.naturalWidth > 0) {
-        drawPacMan(facing);
+    drawPellets();
+    drawRedGhost();
+    if (!gameOver) {
+        // if the browser has finished loading pacman.png AND if pacman.png has loaded successfully
+        if (PACMAN_IMAGE.complete && PACMAN_IMAGE.naturalWidth > 0) {
+            drawPacMan(facing);
+        }
     }
 }

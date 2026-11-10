@@ -1,9 +1,13 @@
 import { GameState, getState } from './state.js';
 import { draw, maze_v1 } from './maze_demo.js';
+import { collectPellet } from './pellet_collection.js';
+import { redGhostCaughtPlayer, updateRedGhost } from "./ghosts/red_ghost.js";
 
 console.log("player_movement.js loaded");
 
-const SPEED = 6; // tiles per second, can increase for difficulty?
+const SPEED = 5; // tiles per second, can increase for difficulty?
+
+export let gameOver = false;
 
 // variables for frame counting
 let frameCount = 0;
@@ -17,7 +21,8 @@ export let player = {
     renderY: 9,
     facing: 'up',
     moving: false,
-    nextDir: null    // buffered direction
+    nextDir: null, // buffered direction
+    pellets: 0
 };
 
 //a change in x or y based on the key input
@@ -82,6 +87,7 @@ function update(dt) {
             player.renderX = player.x;
             player.renderY = player.y;
             player.moving = false;
+            collectPellet(player);
         } else {
             player.renderX += (dx / distance) * step;
             player.renderY += (dy / distance) * step;
@@ -113,7 +119,13 @@ function loop(now) {
         fpsTimer = 0;
     }
 
-    update(dt);
+    if (!gameOver) {
+        update(dt);
+        updateRedGhost(dt);
+        if (redGhostCaughtPlayer()) {
+            gameOver = true;
+        }
+    }
     draw(maze_v1, player.facing);
     requestAnimationFrame(loop);
 }
