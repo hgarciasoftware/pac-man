@@ -70,10 +70,10 @@ export function draw(maze, facing) {
 
     drawPellets();
     drawRedGhost();
-    if (!gameOver) {
-        // if the browser has finished loading pacman.png AND if pacman.png has loaded successfully
-        if (PACMAN_IMAGE.complete && PACMAN_IMAGE.naturalWidth > 0) {
-            drawPacMan(facing);
-        }
+
+    const pacManImageHasLoaded = PACMAN_IMAGE.complete && PACMAN_IMAGE.naturalWidth > 0;
+
+    if (!gameOver && pacManImageHasLoaded) {
+        drawPacMan(facing);
     }
 }
