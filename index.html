@@ -18,6 +18,8 @@
     <script type="module">
       import { GameState, setState } from './state.js';
       import { initMenu } from './menu.js';
+      import { initCharacterSelect } from './characterSelect.js';
+      import { initHighScoresMenu } from './highScoresMenu.js';
       // import { initSettingsMenu } from './settingsMenu.js';
       import { startGameLoop } from './player_movement.js';
 
@@ -27,7 +29,9 @@
         startGameLoop();
       };
 
-      initMenu({container, onPlay});
+      initMenu({container});
+      initCharacterSelect({container, onPlay});
+      initHighScoresMenu({container});
       // initSettingsMenu({container});
       setState(GameState.MENU);
     </script>

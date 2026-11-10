@@ -13,8 +13,9 @@
 //   onSettingChange(fn)        -> run fn every time a setting changes
 //
 // Settings and their values:
-//   muted : true / false (M key toggles it)
-//   theme : one of the names in THEMES below
+//   muted     : true / false (M key toggles it)
+//   theme     : one of the names in THEMES below
+//   character : 'mr' / 'mrs' (Mr. or Mrs. Pac-Man, picked before each game)
 // ============================================================
 
 // Colour themes, in the order the T key cycles through them.
@@ -57,6 +58,9 @@ export const THEMES = Object.freeze({
 
 const THEME_NAMES = Object.keys(THEMES);
 
+// Playable characters: Mr. Pac-Man and Mrs. Pac-Man
+const CHARACTER_IDS = ['mr', 'mrs'];
+
 // Name of the saved data in the browser's localStorage
 const STORAGE_KEY = 'pacman-settings';
 
@@ -64,6 +68,7 @@ const STORAGE_KEY = 'pacman-settings';
 const DEFAULT_SETTINGS = Object.freeze({
     muted: false,
     theme: 'classic',
+    character: 'mr',
 });
 
 let settings = loadSettings(); // the current values
@@ -77,7 +82,7 @@ export function getSetting(name) {
     return settings[name];
 }
 
-// Returns a copy of all settings, e.g. { muted: false, theme: 'classic' }
+// Returns a copy of all settings, e.g. { muted: false, theme: 'classic', character: 'mr' }
 export function getAllSettings() {
     return { ...settings };
 }
@@ -132,6 +137,8 @@ function isValidValue(name, value) {
             return typeof value === 'boolean';
         case 'theme':
             return THEME_NAMES.includes(value);
+        case 'character':
+            return CHARACTER_IDS.includes(value);
         default:
             return false; // unknown setting name
     }
