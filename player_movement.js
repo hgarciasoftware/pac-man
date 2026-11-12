@@ -1,6 +1,6 @@
 import { GameState, getState } from './state.js';
 import { draw, maze_v1 } from './maze_demo.js';
-import { collectPellet } from './pellet_collection.js';
+import { collectPellet, PELLET_REGULAR, PELLET_SUPER } from './pellet_collection.js';
 import { redGhostCaughtPlayer, updateRedGhost } from "./ghosts/red_ghost.js";
 
 console.log("player_movement.js loaded");
@@ -86,7 +86,14 @@ function update(dt) {
             player.renderX = player.x;
             player.renderY = player.y;
             player.moving = false;
-            collectPellet(player);
+
+            // logs all pellets eaten in the 'pellets' field in player
+            const eaten = collectPellet(player);
+            if (eaten == PELLET_REGULAR) {
+              player.pellets++;
+            } else if (eaten == PELLET_SUPER) {
+              player.pellets++;
+            }
         } else {
             player.renderX += (dx / distance) * step;
             player.renderY += (dy / distance) * step;
