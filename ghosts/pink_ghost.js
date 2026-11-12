@@ -1,4 +1,4 @@
-import { maze_v1 } from "../maze_demo.js";
+import { ctx, maze_v1, TILE_SIZE } from "../maze_demo.js";
 import { player } from "../player_movement.js";
 
 console.log("pink_ghost.js loaded");
@@ -95,7 +95,7 @@ export function pinkGhostCaughtPlayer() {
   return Math.hypot(dx, dy) < 0.6;
 }
 
-function drawPinkGhost() {
+export function drawPinkGhost() {
   ctx.fillStyle = '#ffb8ff';
   ctx.fillRect(pinkGhost.renderX * TILE_SIZE, pinkGhost.renderY * TILE_SIZE, TILE_SIZE, TILE_SIZE);
 }
