@@ -4,6 +4,7 @@ import { player } from "../player_movement.js";
 console.log("red_ghost.js loaded");
 
 const RED_GHOST_SPEED = 4;
+const RED_GHOST_START = {x: 17, y: 1};
 
 let redGhost = {
   x: 17,
@@ -105,4 +106,12 @@ export function redGhostCaughtPlayer() {
 export function drawRedGhost() {
   ctx.fillStyle = '#ff0000';
   ctx.fillRect(redGhost.renderX * TILE_SIZE, redGhost.renderY * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+}
+
+export function resetRedGhost() {
+  redGhost.x = RED_GHOST_START.x;
+  redGhost.y = RED_GHOST_START.y;
+  redGhost.renderX = RED_GHOST_START.x;
+  redGhost.renderY = RED_GHOST_START.y;
+  redGhost.moving = false;
 }

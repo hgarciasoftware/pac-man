@@ -70,6 +70,6 @@ export function collectPellet(player) {
   pellets[player.y][player.x] = PELLET_NONE;
   return type;
 }
-function pelletsRemaining() {
+export function pelletsRemaining() {
   return pellets.flat().filter(p => p != PELLET_NONE).length;
 }

@@ -4,6 +4,7 @@ import { player } from "../player_movement.js";
 console.log("pink_ghost.js loaded");
 
 const PINK_GHOST_SPEED = 4;
+const PINK_GHOST_START = {x: 1, y: 1};
 
 let pinkGhost = {
   x: 1,
@@ -98,4 +99,12 @@ export function pinkGhostCaughtPlayer() {
 export function drawPinkGhost() {
   ctx.fillStyle = '#ffb8ff';
   ctx.fillRect(pinkGhost.renderX * TILE_SIZE, pinkGhost.renderY * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+}
+
+export function resetPinkGhost() {
+  pinkGhost.x = PINK_GHOST_START.x;
+  pinkGhost.y = PINK_GHOST_START.y;
+  pinkGhost.renderX = PINK_GHOST_START.x;
+  pinkGhost.renderY = PINK_GHOST_START.y;
+  pinkGhost.moving = false;
 }
