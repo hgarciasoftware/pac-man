@@ -2,6 +2,7 @@ import { GameState, getState } from './state.js';
 import { draw, maze_v1 } from './maze_demo.js';
 import { collectPellet, PELLET_REGULAR, PELLET_SUPER } from './pellet_collection.js';
 import { redGhostCaughtPlayer, updateRedGhost } from "./ghosts/red_ghost.js";
+import { pinkGhostCaughtPlayer, updatePinkGhost } from './ghosts/pink_ghost.js';
 
 console.log("player_movement.js loaded");
 
@@ -127,7 +128,9 @@ function loop(now) {
     if (!gameOver) {
         update(dt);
         updateRedGhost(dt);
-        if (redGhostCaughtPlayer()) {
+        updatePinkGhost(dt);
+        console.log('hey what about me')
+        if (redGhostCaughtPlayer() || pinkGhostCaughtPlayer()) {
             gameOver = true;
         }
     }
