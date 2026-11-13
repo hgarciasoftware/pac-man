@@ -1,7 +1,11 @@
 import { GameState, getState } from './state.js';
 import { draw, maze_v1 } from './maze_demo.js';
-import { collectPellet } from './pellet_collection.js';
-import { redGhostCaughtPlayer, updateRedGhost } from "./ghosts/red_ghost.js";
+import { collectPellet, pelletsRemaining, PELLET_REGULAR, PELLET_SUPER } from './pellet_collection.js';
+import { redGhostCaughtPlayer, resetRedGhost, updateRedGhost } from "./ghosts/red_ghost.js";
+import { pinkGhostCaughtPlayer, resetPinkGhost, updatePinkGhost } from './ghosts/pink_ghost.js';
+import { awardPellet, getScoreData } from './scoring.js';
+import { getCurrentLevel, completeLevel } from './levelProgression.js';
+import { loseLife } from './lives.js';
 
 console.log("player_movement.js loaded");
 
@@ -87,7 +91,28 @@ function update(dt) {
             player.renderX = player.x;
             player.renderY = player.y;
             player.moving = false;
-            collectPellet(player);
+
+            // logs all pellets eaten in the 'pellets' field in player
+            const eaten = collectPellet(player);
+            // this section of code can be made to be less repetitive
+            if (eaten == PELLET_REGULAR) {
+              player.pellets++;
+              awardPellet(eaten, getCurrentLevel());
+            } else if (eaten == PELLET_SUPER) {
+              player.pellets++;
+              awardPellet(eaten, getCurrentLevel());
+            }
+
+            const score = getScoreData();
+            const completion = completeLevel(pelletsRemaining());
+
+            // don't just log the score, display the score to the player
+            console.log('totalScore: ' + score.totalScore);
+
+            // don't just log completion, display completion to the player
+            if (completion) {
+                console.log('Level complete:', completion);
+            }
         } else {
             player.renderX += (dx / distance) * step;
             player.renderY += (dy / distance) * step;
@@ -122,8 +147,26 @@ function loop(now) {
     if (!gameOver) {
         update(dt);
         updateRedGhost(dt);
-        if (redGhostCaughtPlayer()) {
-            gameOver = true;
+        updatePinkGhost(dt);
+        if (redGhostCaughtPlayer() || pinkGhostCaughtPlayer()) {
+            const result = loseLife();
+
+            if (result.gameOver) {
+                gameOver = true;
+                // TODO: handle game over
+            } else {
+                // reset pac-man
+                player.x = 9;
+                player.y = 9;
+                player.renderX = 9;
+                player.renderY = 9;
+                player.moving = false;
+                player.nextDir = null;
+
+                // reset ghosts
+                resetRedGhost();
+                resetPinkGhost();
+            }
         }
     }
     draw(maze_v1, player.facing);

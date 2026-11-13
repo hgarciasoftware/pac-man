@@ -1,6 +1,7 @@
 import { gameOver, player } from "./player_movement.js";
 import { drawPellets } from "./pellet_collection.js";
 import { drawRedGhost } from "./ghosts/red_ghost.js";
+import { drawPinkGhost } from "./ghosts/pink_ghost.js";
 
 console.log("maze_demo.js loaded");
 
@@ -70,6 +71,7 @@ export function draw(maze, facing) {
 
     drawPellets();
     drawRedGhost();
+    drawPinkGhost();
 
     const pacManImageHasLoaded = PACMAN_IMAGE.complete && PACMAN_IMAGE.naturalWidth > 0;
 
