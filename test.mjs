@@ -15,6 +15,7 @@ import assert from 'node:assert/strict';
 import {
     awardPellet,
     awardFrightenedGhost,
+    resetGhostChain,
     getScoreData
 } from './scoring.js';
 
@@ -131,20 +132,45 @@ assert.equal(awardPellet(1, getCurrentLevel()), 2);
 
 console.log('PASS: Level progression');
 
-
 // ============================================================
 // TEST 6 - LIVES SYSTEM
 //
-// Losing a life should reduce lives from 3 to 2.
+// Pac-Man starts with 3 lives.
+// Each collision removes one life.
 //
-// Game Over should remain false because lives are still left.
+// When lives reach 0, Game Over must become true.
+// Additional collisions must not make lives negative.
 // ============================================================
 
+// First collision: 3 -> 2 lives.
 assert.deepEqual(loseLife(), {
     lives: 2,
     lifeLost: true,
     gameOver: false
 });
+
+// Second collision: 2 -> 1 life.
+assert.deepEqual(loseLife(), {
+    lives: 1,
+    lifeLost: true,
+    gameOver: false
+});
+
+// Third collision: 1 -> 0 lives (Game Over).
+assert.deepEqual(loseLife(), {
+    lives: 0,
+    lifeLost: true,
+    gameOver: true
+});
+
+// Additional collision: lives must stay at 0.
+assert.deepEqual(loseLife(), {
+    lives: 0,
+    lifeLost: false,
+    gameOver: true
+});
+
+assert.equal(getLives(), 0);
 
 console.log('PASS: Lives system');
 
@@ -168,6 +194,120 @@ assert.equal(getScoreData().levelScore, 0);
 
 console.log('PASS: Game reset');
 
+// ============================================================
+// TEST 8 - SCORING ACROSS ALL THREE LEVELS
+//
+// Regular pellet points depend on the current level.
+// Super pellets always award 50 points.
+// ============================================================
+
+startNewGame();
+
+// Level 1.
+assert.equal(awardPellet(1, 1), 1);
+assert.equal(awardPellet(2, 1), 50);
+
+// Level 2.
+assert.equal(awardPellet(1, 2), 2);
+assert.equal(awardPellet(2, 2), 50);
+
+// Level 3.
+assert.equal(awardPellet(1, 3), 3);
+assert.equal(awardPellet(2, 3), 50);
+
+assert.equal(getScoreData().totalScore, 156);
+
+console.log('PASS: Scoring across all three levels');
+
+// ============================================================
+// TEST 9 - FRIGHTENED GHOST SCORING
+//
+// Consecutive frightened ghosts award increasing points.
+//
+// After four ghosts, no additional points are awarded
+// until the ghost scoring sequence is reset.
+// ============================================================
+
+startNewGame();
+
+// Check the sequence of ghost points.
+assert.equal(awardFrightenedGhost(), 200);
+assert.equal(awardFrightenedGhost(), 400);
+assert.equal(awardFrightenedGhost(), 800);
+assert.equal(awardFrightenedGhost(), 1600);
+
+// The sequence has reached its limit.
+assert.equal(awardFrightenedGhost(), 0);
+
+// Reset the sequence.
+resetGhostChain();
+
+// The first ghost should award 200 points again.
+assert.equal(awardFrightenedGhost(), 200);
+
+console.log('PASS: Frightened ghost scoring');
+
+// ============================================================
+// TEST 10 - LEVEL PROGRESSION BOUNDARIES
+//
+// Players cannot skip unfinished levels.
+// The game contains only three levels.
+// ============================================================
+
+startNewGame();
+
+// Cannot advance before completing Level 1.
+assert.equal(startNextLevel(), null);
+assert.equal(getCurrentLevel(), 1);
+
+// Complete Level 1 and advance to Level 2.
+completeLevel(0);
+assert.equal(startNextLevel(), 2);
+
+// Cannot skip Level 2.
+assert.equal(startNextLevel(), null);
+
+// Complete Level 2 and advance to Level 3.
+completeLevel(0);
+assert.equal(startNextLevel(), 3);
+
+// Complete the final level.
+const finalResult = completeLevel(0);
+
+assert.equal(finalResult.isFinalLevel, true);
+
+// There must not be a Level 4.
+assert.equal(startNextLevel(), null);
+assert.equal(getCurrentLevel(), 3);
+
+console.log('PASS: Level progression boundaries');
+
+// ============================================================
+// TEST 11 - GAME OVER RESTRICTIONS
+//
+// A player with zero lives cannot complete a level
+// or advance to the next level.
+// ============================================================
+
+startNewGame();
+
+// Lose all three lives.
+loseLife();
+loseLife();
+loseLife();
+
+assert.equal(getLives(), 0);
+
+// Cannot complete a level after Game Over.
+assert.equal(completeLevel(0), null);
+
+// Cannot advance to another level.
+assert.equal(startNextLevel(), null);
+
+// The current level must remain unchanged.
+assert.equal(getCurrentLevel(), 1);
+
+console.log('PASS: Game Over restrictions');
 
 // All tests completed successfully.
-console.log('\nAll 7 tests passed!');
+console.log('\nAll 11 tests passed!');
