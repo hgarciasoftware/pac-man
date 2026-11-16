@@ -1,12 +1,15 @@
 <!DOCTYPE html>
+<!-- the lang attribute helps screen readers pronounce the page's text correctly -->
 <html lang="en">
   <head>
     <title>PAC-MAN | GROUP 2 | CISC 3140 - FALL 2026</title>
+    <!-- the viewport meta tag sets the page's layout width and initial zoom on mobile -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./index.css">
   </head>
   <body>
     <main id="game-container">
+      <!-- the game is 19 columns by 23 rows, with each tile 30 x 30 pixels -->
       <canvas id="game" width="570" height="690"></canvas>
       <div class="debug">
         <div>Coordinates:</div>
@@ -14,17 +17,17 @@
         <div>FPS:</div>
         <div id="fps">waiting&hellip;</div>
       </div>
-    </div>
+    </main>
     <script type="module">
       import { GameState, setState } from './state.js';
       import { initMenu } from './menu.js';
       import { initCharacterSelect } from './characterSelect.js';
       import { initHighScoresMenu } from './highScoresMenu.js';
-      // import { initSettingsMenu } from './settingsMenu.js';
       import { startGameLoop } from './player_movement.js';
 
       const container = document.querySelector('#game-container');
       const onPlay = () => {
+        // show the game
         setState(GameState.PLAYING);
         startGameLoop();
       };
@@ -32,7 +35,8 @@
       initMenu({container});
       initCharacterSelect({container, onPlay});
       initHighScoresMenu({container});
-      // initSettingsMenu({container});
+
+      // show the main menu
       setState(GameState.MENU);
     </script>
   </body>

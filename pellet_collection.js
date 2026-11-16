@@ -11,31 +11,33 @@ export const PELLET_SUPER = 2;
 const pellet_radius = 3;
 const super_pellet_radius = 7;
 
-//this maps pellets onto every empty tile
-// Note to Hector: explain what commenting Elian's code here achieves
-// Note to Hector: explain how you eventually implement Elian's code
-// const pellets = maze_v1.map(row => row.map(cell => cell == 0 ? PELLET_REGULAR : PELLET_NONE));
-let pellets = [];
+// initializing pellets requires maze_v1 from maze_demo.js.
+// but maze_demo.js also imports drawPellets() from this file.
+// therefore, initialize the pellets only after both modules have been evaluated.
+let pellets;
+let pelletsInitialized = false;
 
-// pellets[9][9] = PELLET_NONE; // no pellets at the starting point
+function initializePellets() {
+  if (pelletsInitialized) return;
 
-//super pellets in the corners
-// pellets[1][1] = PELLET_SUPER;
-// pellets[1][17] = PELLET_SUPER;
-// pellets[21][1] = PELLET_SUPER;
-// pellets[21][17] = PELLET_SUPER;
+  //this maps pellets onto every empty tile
+  pellets = maze_v1.map(row => row.map(cell => cell == 0 ? PELLET_REGULAR : PELLET_NONE));
+
+  pellets[9][9] = PELLET_NONE; // no pellets at the starting point
+
+  //super pellets in the corners
+  pellets[1][1] = PELLET_SUPER;
+  pellets[1][17] = PELLET_SUPER;
+  pellets[21][1] = PELLET_SUPER;
+  pellets[21][17] = PELLET_SUPER;
+
+  pelletsInitialized = true;
+}
 
 
 // draws pellets to the screen
 export function drawPellets() {
-  if (pellets.length === 0) {
-    pellets = maze_v1.map(row => row.map(cell => cell == 0 ? PELLET_REGULAR : PELLET_NONE));
-    pellets[9][9] = PELLET_NONE;
-    pellets[1][1] = PELLET_SUPER;
-    pellets[1][17] = PELLET_SUPER;
-    pellets[21][1] = PELLET_SUPER;
-    pellets[21][17] = PELLET_SUPER;
-  }
+  initializePellets();
 
   ctx.fillStyle = '#ffd9a0';
   for (let i = 0; i < pellets.length; i++) {
@@ -57,15 +59,6 @@ export function drawPellets() {
 
 
 export function collectPellet(player) {
-  if (pellets.length === 0) {
-    pellets = maze_v1.map(row => row.map(cell => cell == 0 ? PELLET_REGULAR : PELLET_NONE));
-    pellets[9][9] = PELLET_NONE;
-    pellets[1][1] = PELLET_SUPER;
-    pellets[1][17] = PELLET_SUPER;
-    pellets[21][1] = PELLET_SUPER;
-    pellets[21][17] = PELLET_SUPER;
-  }
-
   const type = pellets[player.y][player.x];
   pellets[player.y][player.x] = PELLET_NONE;
   return type;

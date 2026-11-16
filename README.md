@@ -20,7 +20,8 @@ I personally use `npx http-server`, which serves on port 8080 by default (More i
 
 ## Credits
 
-* `ghosts/red_ghost.js`, `maze_demo.js`, `pellet_collection.js` and `player_movement.js`  - Elian Urena
+* `ghosts/pink_ghost.js`, `ghosts/red_ghost.js`, `maze_demo.js`, `pellet_collection.js` and `player_movement.js`  - Elian Urena
 * `characterSelect.js`, `highScores.js`, `highScoresMenu.js`, `initialsEntry.js`, `menu.js`, `screenStyles.js`, `settings.js`, and `state.js` - Danylo Dudchenko
+* `levelProgression.js`, `lives.js`, `scoring.js`, and `test.mjs` - Fiona Vladi
 
 *More to come*

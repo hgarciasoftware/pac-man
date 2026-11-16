@@ -5,13 +5,17 @@ body {
 body {
   min-height: 100vh;
   display: flex;
+  /* center items along the main axis (in this case, the x-axis) */
   justify-content: center;
+  /* center items along the cross axis (in this case, the y-axis) */
   align-items: center;
   background: #111;
 }
 
 #game-container {
+  /* menus require the game container to be positioned relatively */
   position: relative;
+  /* cap the game's width at 570px and fit it within the viewport at a 19:23 aspect ratio */
   width: min(570px, 100vw, calc((100vh - 6rem) * 19 / 23));
   aspect-ratio: 19 / 23;
 }
