@@ -2,6 +2,7 @@ import { gameOver, player } from "./player_movement.js";
 import { drawPellets } from "./pellet_collection.js";
 import { drawRedGhost } from "./ghosts/red_ghost.js";
 import { drawPinkGhost } from "./ghosts/pink_ghost.js";
+import { drawBlueGhost } from "./ghosts/blue_ghost.js";
 
 console.log("maze_demo.js loaded");
 
@@ -50,6 +51,7 @@ export function draw(maze) {
     drawPellets();
     drawRedGhost();
     drawPinkGhost();
+    drawBlueGhost();
     if (!gameOver) {
       ctx.fillStyle = '#fcba03';
       ctx.fillRect(player.renderX * TILE_SIZE, player.renderY * TILE_SIZE, TILE_SIZE, TILE_SIZE);
