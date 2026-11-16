@@ -3,6 +3,7 @@ import { draw, maze_v1 } from './maze_demo.js';
 import { collectPellet, pelletsRemaining, PELLET_REGULAR, PELLET_SUPER } from './pellet_collection.js';
 import { redGhostCaughtPlayer, resetRedGhost, updateRedGhost } from "./ghosts/red_ghost.js";
 import { pinkGhostCaughtPlayer, resetPinkGhost, updatePinkGhost } from './ghosts/pink_ghost.js';
+import { blueGhostCaughtPlayer, resetBlueGhost, updateBlueGhost } from './ghosts/blue_ghost.js';
 import { awardPellet, getScoreData } from './scoring.js';
 import { getCurrentLevel, completeLevel } from './levelProgression.js';
 import { loseLife } from './lives.js';
@@ -161,7 +162,8 @@ function loop(now) {
         update(dt);
         updateRedGhost(dt);
         updatePinkGhost(dt);
-        if (redGhostCaughtPlayer() || pinkGhostCaughtPlayer()) {
+        updateBlueGhost(dt);
+        if (redGhostCaughtPlayer() || pinkGhostCaughtPlayer() || blueGhostCaughtPlayer()) {
             // loseLife() returns an object with three properties:
             // lives (number), lifeLost (boolean), and gameOver (boolean)
             const result = loseLife();

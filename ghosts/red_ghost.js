@@ -6,7 +6,7 @@ console.log("red_ghost.js loaded");
 const RED_GHOST_SPEED = 4;
 const RED_GHOST_START = {x: 17, y: 1};
 
-let redGhost = {
+export let redGhost = {
   x: 17,
   y: 1,
   renderX : 17,
