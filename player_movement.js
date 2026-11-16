@@ -10,6 +10,7 @@ import { loseLife } from './lives.js';
 console.log("player_movement.js loaded");
 
 const SPEED = 5; // tiles per second, can increase for difficulty?
+const START = {x: 9, y: 9}; // the player's starting point
 
 export let gameOver = false;
 
@@ -19,10 +20,10 @@ let fpsTimer = 0;
 let last = performance.now();
 
 export let player = {
-    x: 9,            // logical tile (used for collision)
-    y: 9,
-    renderX: 9,      // smoothed position (used for drawing), in tile units
-    renderY: 9,
+    x: START.x,            // logical tile (used for collision)
+    y: START.y,
+    renderX: START.x,      // smoothed position (used for drawing), in tile units
+    renderY: START.y,
     moving: false,
     nextDir: null, // buffered direction
     pellets: 0
@@ -35,6 +36,16 @@ const movements = {
     ArrowLeft: {dy: 0, dx: -1},
     ArrowRight: {dy: 0, dx: 1}
 };
+
+// move the player back to the starting point
+function resetPlayer() {
+    player.x = START.x;
+    player.y = START.y;
+    player.renderX = START.x;
+    player.renderY = START.y;
+    player.moving = false;
+    player.nextDir = null;
+}
 
 /* Sends move log to the console, as well as updates a coordinate
     text below the maze, I don't know if this is temporary or a feature,
@@ -51,6 +62,7 @@ function logFPS(fps) {
 }
 
 document.addEventListener('keydown', (event) => {
+    // if the game's state is not PLAYING then do not allow the player to move
     if (getState() !== GameState.PLAYING) return;
 
     const direction = movements[event.key];
@@ -93,7 +105,6 @@ function update(dt) {
 
             // logs all pellets eaten in the 'pellets' field in player
             const eaten = collectPellet(player);
-            // this section of code can be made to be less repetitive
             if (eaten == PELLET_REGULAR) {
               player.pellets++;
               awardPellet(eaten, getCurrentLevel());
@@ -102,13 +113,14 @@ function update(dt) {
               awardPellet(eaten, getCurrentLevel());
             }
 
+            // retrieve the player's score and completion status
             const score = getScoreData();
             const completion = completeLevel(pelletsRemaining());
 
-            // don't just log the score, display the score to the player
+            // TODO: display the score to the player
             console.log('totalScore: ' + score.totalScore);
 
-            // don't just log completion, display completion to the player
+            // TODO: display completion status to the player
             if (completion) {
                 console.log('Level complete:', completion);
             }
@@ -147,21 +159,15 @@ function loop(now) {
         updateRedGhost(dt);
         updatePinkGhost(dt);
         if (redGhostCaughtPlayer() || pinkGhostCaughtPlayer()) {
+            // loseLife() returns an object with three properties:
+            // lives (number), lifeLost (boolean), and gameOver (boolean)
             const result = loseLife();
 
             if (result.gameOver) {
                 gameOver = true;
                 // TODO: handle game over
             } else {
-                // reset pac-man
-                player.x = 9;
-                player.y = 9;
-                player.renderX = 9;
-                player.renderY = 9;
-                player.moving = false;
-                player.nextDir = null;
-
-                // reset ghosts
+                resetPlayer();
                 resetRedGhost();
                 resetPinkGhost();
             }
