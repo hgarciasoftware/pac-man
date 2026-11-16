@@ -46,6 +46,7 @@ function draw(maze) {
     drawPellets();
     drawRedGhost();
     drawPinkGhost();
+    drawBlueGhost();
     if (!gameOver) {
       ctx.fillStyle = '#fcba03';
       ctx.fillRect(player.renderX * TILE_SIZE, player.renderY * TILE_SIZE, TILE_SIZE, TILE_SIZE);
