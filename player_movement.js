@@ -122,7 +122,8 @@ function loop(now) {
       updateRedGhost(dt);
       updatePinkGhost(dt);
       updateBlueGhost(dt);
-      if (redGhostCaughtPlayer() || pinkGhostCaughtPlayer() || blueGhostCaughtPlayer()) {
+      updateOrangeGhost(dt);
+      if (redGhostCaughtPlayer() || pinkGhostCaughtPlayer() || blueGhostCaughtPlayer() || orangeGhostCaughtPlayer()) {
         gameOver = true;
     }
   }
