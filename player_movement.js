@@ -4,6 +4,7 @@ import { collectPellet, pelletsRemaining, PELLET_REGULAR, PELLET_SUPER } from '.
 import { redGhostCaughtPlayer, resetRedGhost, updateRedGhost } from "./ghosts/red_ghost.js";
 import { pinkGhostCaughtPlayer, resetPinkGhost, updatePinkGhost } from './ghosts/pink_ghost.js';
 import { blueGhostCaughtPlayer, resetBlueGhost, updateBlueGhost } from './ghosts/blue_ghost.js';
+import { orangeGhostCaughtPlayer, resetOrangeGhost, updateOrangeGhost } from './ghosts/orange_ghost.js';
 import { awardPellet, getScoreData } from './scoring.js';
 import { getCurrentLevel, completeLevel } from './levelProgression.js';
 import { loseLife } from './lives.js';
@@ -160,7 +161,8 @@ function loop(now) {
         updateRedGhost(dt);
         updatePinkGhost(dt);
         updateBlueGhost(dt);
-        if (redGhostCaughtPlayer() || pinkGhostCaughtPlayer() || blueGhostCaughtPlayer()) {
+        updateOrangeGhost(dt);
+        if (redGhostCaughtPlayer() || pinkGhostCaughtPlayer() || blueGhostCaughtPlayer() || orangeGhostCaughtPlayer()) {
             // loseLife() returns an object with three properties:
             // lives (number), lifeLost (boolean), and gameOver (boolean)
             const result = loseLife();
@@ -172,6 +174,8 @@ function loop(now) {
                 resetPlayer();
                 resetRedGhost();
                 resetPinkGhost();
+                resetBlueGhost();
+                resetOrangeGhost();
             }
         }
     }
