@@ -1,5 +1,6 @@
 import { ctx, maze_v1, TILE_SIZE } from "../maze_demo.js";
 import { player } from "../player_movement.js";
+import { frightenedNextStep, isFrightened, markGhostCaught } from "./frightened.js";
 
 console.log("red_ghost.js loaded");
 
@@ -81,7 +82,9 @@ export function updateRedGhost(dt) {
 
   //when it reaches a specific tile, it steps towards pacmans current tile
   if (!redGhost.moving) {
-    const next = redNextStep(redGhost.x, redGhost.y, player.x, player.y, maze_v1);
+    const next = isFrightened('red')
+      ? frightenedNextStep(redGhost.x, redGhost.y, player.x, player.y, maze_v1)
+      : redNextStep(redGhost.x, redGhost.y, player.x, player.y, maze_v1);
     if (next) {
       redGhost.x += next.dx;
       redGhost.y += next.dy;
@@ -94,17 +97,25 @@ export function updateRedGhost(dt) {
 export function redGhostCaughtPlayer() {
   const dx = redGhost.renderX - player.renderX;
   const dy = redGhost.renderY - player.renderY;
-  return Math.hypot(dx, dy) < 0.6;
+  const touching = Math.hypot(dx, dy) < 0.6;
   // 0.6 is the catch distance, increasing it will make it
   // so even a slight graze will catch pacman; maybe this could be 
   // something that could be increased for a higher difficulty
-  
+  if (!touching) return false;
+
+  if (isFrightened('red')) {
+    markGhostCaught('red');
+    resetRedGhost();
+    return false; // The game loop won't make Pac-Man lose a life.
+  }
+
+  return true; // Normal ghost: Pac-Man loses a life.
 }
 
 //this is just temporary for testing purposes, can be replaced with 
 //code that provides that actual images for the red ghost
 export function drawRedGhost() {
-  ctx.fillStyle = '#ff0000';
+  ctx.fillStyle = isFrightened('red') ? '#ffffff' : '#ff0000';
   ctx.fillRect(redGhost.renderX * TILE_SIZE, redGhost.renderY * TILE_SIZE, TILE_SIZE, TILE_SIZE);
 }
 

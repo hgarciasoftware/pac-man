@@ -8,6 +8,7 @@ import { orangeGhostCaughtPlayer, resetOrangeGhost, updateOrangeGhost } from './
 import { awardPellet, getScoreData } from './scoring.js';
 import { getCurrentLevel, completeLevel } from './levelProgression.js';
 import { loseLife } from './lives.js';
+import { activateFrightenedMode, updateFrightenedMode } from "./ghosts/frightened.js";
 
 console.log("player_movement.js loaded");
 
@@ -113,6 +114,7 @@ function update(dt) {
             } else if (eaten == PELLET_SUPER) {
               player.pellets++;
               awardPellet(eaten, getCurrentLevel());
+              activateFrightenedMode(8);
             }
 
             // retrieve the player's score and completion status
@@ -158,6 +160,7 @@ function loop(now) {
 
     if (!gameOver) {
         update(dt);
+        updateFrightenedMode(dt);
         updateRedGhost(dt);
         updatePinkGhost(dt);
         updateBlueGhost(dt);
