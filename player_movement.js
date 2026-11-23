@@ -39,6 +39,12 @@ const movements = {
     ArrowRight: {dy: 0, dx: 1}
 };
 
+// the HTML element that contains the score display
+const scoreElement = document.querySelector('#score');
+
+// the HTML element that contains the lives display
+const livesElement = document.querySelector('#lives');
+
 // move the player back to the starting point
 function resetPlayer() {
     player.x = START.x;
@@ -119,8 +125,8 @@ function update(dt) {
             const score = getScoreData();
             const completion = completeLevel(pelletsRemaining());
 
-            // TODO: display the score to the player
-            console.log('totalScore: ' + score.totalScore);
+            // show the player their most up-to-date score
+            scoreElement.textContent = `Score: ${score.totalScore}`;
 
             // TODO: display completion status to the player
             if (completion) {
@@ -166,6 +172,9 @@ function loop(now) {
             // loseLife() returns an object with three properties:
             // lives (number), lifeLost (boolean), and gameOver (boolean)
             const result = loseLife();
+
+            // show the player how many lives they have remaining
+            livesElement.textContent = `Lives: ${result.lives}`
 
             if (result.gameOver) {
                 gameOver = true;

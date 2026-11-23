@@ -9,8 +9,12 @@
   </head>
   <body>
     <main id="game-container">
-      <!-- the game is 19 columns by 23 rows, with each tile 30 x 30 pixels -->
-      <canvas id="game" width="570" height="690"></canvas>
+      <div id="board">
+        <div id="score">Score: 0</div>
+        <div id="lives">Lives: 3</div>
+        <!-- the game is 19 columns by 23 rows, with each tile 30 x 30 pixels -->
+        <canvas id="game" width="570" height="690"></canvas>
+      </div>
       <div class="debug">
         <div>Coordinates:</div>
         <div id="coordinates">waiting for input&hellip;</div>
