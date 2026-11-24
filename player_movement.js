@@ -8,6 +8,7 @@ import { orangeGhostCaughtPlayer, resetOrangeGhost, updateOrangeGhost } from './
 import { awardPellet, getScoreData } from './scoring.js';
 import { getCurrentLevel, completeLevel } from './levelProgression.js';
 import { loseLife } from './lives.js';
+import { activateFrightenedMode, updateFrightenedMode } from "./ghosts/frightened.js";
 
 console.log("player_movement.js loaded");
 
@@ -39,6 +40,12 @@ const movements = {
     ArrowLeft: {dy: 0, dx: -1, facing: 'left'},
     ArrowRight: {dy: 0, dx: 1, facing: 'right'}
 };
+
+// the HTML element that contains the score display
+const scoreElement = document.querySelector('#score');
+
+// the HTML element that contains the lives display
+const livesElement = document.querySelector('#lives');
 
 // move the player back to the starting point
 function resetPlayer() {
@@ -115,14 +122,15 @@ function update(dt) {
             } else if (eaten == PELLET_SUPER) {
               player.pellets++;
               awardPellet(eaten, getCurrentLevel());
+              activateFrightenedMode(8);
             }
 
             // retrieve the player's score and completion status
             const score = getScoreData();
             const completion = completeLevel(pelletsRemaining());
 
-            // TODO: display the score to the player
-            console.log('totalScore: ' + score.totalScore);
+            // show the player their most up-to-date score
+            scoreElement.textContent = `Score: ${score.totalScore}`;
 
             // TODO: display completion status to the player
             if (completion) {
@@ -161,6 +169,7 @@ function loop(now) {
 
     if (!gameOver) {
         update(dt);
+        updateFrightenedMode(dt);
         updateRedGhost(dt);
         updatePinkGhost(dt);
         updateBlueGhost(dt);
@@ -169,6 +178,9 @@ function loop(now) {
             // loseLife() returns an object with three properties:
             // lives (number), lifeLost (boolean), and gameOver (boolean)
             const result = loseLife();
+
+            // show the player how many lives they have remaining
+            livesElement.textContent = `Lives: ${result.lives}`
 
             if (result.gameOver) {
                 gameOver = true;

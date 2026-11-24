@@ -1,5 +1,6 @@
 import { ctx, maze_v1, TILE_SIZE } from "../maze_demo.js";
 import { player } from "../player_movement.js";
+import { frightenedNextStep, isFrightened, markGhostCaught } from "./frightened.js";
 
 console.log("pink_ghost.js loaded");
 
@@ -81,7 +82,9 @@ export function updatePinkGhost(dt) {
 
   if (!pinkGhost.moving) {
     const target = pinkTarget();
-    const next = pinkNextStep(pinkGhost.x, pinkGhost.y, target.x, target.y, maze_v1);
+    const next = isFrightened('pink')
+      ? frightenedNextStep(pinkGhost.x, pinkGhost.y, player.x, player.y, maze_v1)
+      : pinkNextStep(pinkGhost.x, pinkGhost.y, target.x, target.y, maze_v1);
     if (next) {
       pinkGhost.x += next.dx;
       pinkGhost.y += next.dy;
@@ -93,11 +96,21 @@ export function updatePinkGhost(dt) {
 export function pinkGhostCaughtPlayer() {
   const dx = pinkGhost.renderX - player.renderX;
   const dy = pinkGhost.renderY - player.renderY;
-  return Math.hypot(dx, dy) < 0.6;
+  const touching =  Math.hypot(dx, dy) < 0.6;
+
+  if (!touching) return false;
+
+  if (isFrightened('pink')) {
+    markGhostCaught('pink');
+    resetPinkGhost();
+    return false; // The game loop won't make Pac-Man lose a life.
+  }
+
+  return true; // Normal ghost: Pac-Man loses a life.
 }
 
 export function drawPinkGhost() {
-  ctx.fillStyle = '#ffb8ff';
+  ctx.fillStyle = isFrightened('pink') ? '#ffffff' : '#ffb8ff';
   ctx.fillRect(pinkGhost.renderX * TILE_SIZE, pinkGhost.renderY * TILE_SIZE, TILE_SIZE, TILE_SIZE);
 }
 
